@@ -11,6 +11,7 @@ type Config struct {
 	AppEnv      string
 	AppPort     string
 	DatabaseURL string
+	RedisURL    string
 }
 
 func LoadConfig() (*Config, error) {
@@ -21,10 +22,16 @@ func LoadConfig() (*Config, error) {
 		return nil, err
 	}
 
+	redisURL, err := MustGetEnv("REDIS_URL")
+	if err != nil {
+		return nil, err
+	}
+
 	cfg := &Config{
 		AppEnv:      GetEnvOrDefault("APP_ENVIRONMENT", "local"),
 		AppPort:     GetEnvOrDefault("APP_PORT", "8080"),
 		DatabaseURL: databaseURL,
+		RedisURL:    redisURL,
 	}
 
 	return cfg, nil
