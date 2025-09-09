@@ -1,0 +1,14 @@
+services:
+  postgres:
+    image: postgres:15
+    ports:
+      - 5432:5432
+    environment:
+      POSTGRES_USER: golinky-user
+      POSTGRES_PASSWORD: golinky-password
+      POSTGRES_DB: golinky
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:

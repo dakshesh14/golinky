@@ -11,4 +11,5 @@ bin/
 .envs/*
 !.envs/.gitkeep
 .env.*
+.env
 !.env.example
