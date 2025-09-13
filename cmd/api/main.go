@@ -2,11 +2,14 @@ package main
 
 import (
 	"log"
+	"net/http"
 
 	"github.com/dakshesh14/golinky/internal/config"
 	"github.com/dakshesh14/golinky/internal/container"
 	"github.com/dakshesh14/golinky/internal/infrastructure/cache"
 	"github.com/dakshesh14/golinky/internal/infrastructure/db"
+	"github.com/dakshesh14/golinky/internal/routes"
+	"github.com/go-chi/chi/v5"
 )
 
 func main() {
@@ -26,9 +29,12 @@ func main() {
 		log.Fatalf("Failed to connect to cache: %v", err)
 	}
 
-	container.NewContainer(database, cache, cfg)
+	container := container.NewContainer(database, cache, cfg)
 
-	if err != nil {
-		log.Fatalf("Failed to initialize database: %v", err)
-	}
+	router := chi.NewRouter()
+
+	routes.SetupRoutes(router, container)
+
+	log.Printf("Starting server on port %s", cfg.AppPort)
+	log.Fatal(http.ListenAndServe(":"+cfg.AppPort, router))
 }
