@@ -40,5 +40,5 @@ func (h *Handler) HealthCheckHandler(w http.ResponseWriter, r *http.Request) {
 		Cache: cacheStatus,
 	}
 
-	response.WriteJson(w, http.StatusOK, resp)
+	response.WriteJSON(w, http.StatusOK, resp)
 }
