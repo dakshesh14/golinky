@@ -2,6 +2,8 @@
 
 A simple URL shortener built with Go, PostgreSQL, and Redis. Designed for fast URL redirection and analytics tracking. The goal of the project was to learn Go, concurrency patterns, and building a feature rich microservice.
 
+https://github.com/user-attachments/assets/10db5922-729d-41ed-9947-c97b72a4a42b
+
 ## Features
 
 - Shorten long URLs into compact codes
