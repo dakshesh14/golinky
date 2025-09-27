@@ -13,8 +13,10 @@ import (
 	"github.com/dakshesh14/golinky/internal/container"
 	"github.com/dakshesh14/golinky/internal/domain/model"
 	"github.com/dakshesh14/golinky/internal/infrastructure/db/repository"
+	"github.com/dakshesh14/golinky/pkg/constants"
 	"github.com/dakshesh14/golinky/pkg/response"
 	"github.com/dakshesh14/golinky/pkg/shorten"
+	"github.com/dakshesh14/golinky/pkg/utils"
 )
 
 const IDCounter = 99999
@@ -74,6 +76,15 @@ func (h *Handler) RedirectToOriginal(w http.ResponseWriter, r *http.Request) {
 	code := chi.URLParam(r, "code")
 
 	if cacheLink, err := h.container.Cache.Get(r.Context(), code); err == nil {
+
+		clickEvent := &model.LinkClickEvent{
+			LinkCode:  code,
+			IP:        utils.ExtractIP(r),
+			UserAgent: r.UserAgent(),
+			TS:        time.Now().UTC(),
+		}
+		h.container.Cache.Enqueue(r.Context(), constants.AnalyticsQueue, clickEvent)
+
 		http.Redirect(w, r, cacheLink, http.StatusFound)
 		return
 	}
@@ -81,6 +92,15 @@ func (h *Handler) RedirectToOriginal(w http.ResponseWriter, r *http.Request) {
 	link, err := h.linkRepository.GetByCode(r.Context(), code)
 	switch {
 	case err == nil:
+
+		clickEvent := &model.LinkClickEvent{
+			LinkCode:  code,
+			IP:        utils.ExtractIP(r),
+			UserAgent: r.UserAgent(),
+			TS:        time.Now().UTC(),
+		}
+		h.container.Cache.Enqueue(r.Context(), constants.AnalyticsQueue, clickEvent)
+
 		h.container.Cache.Set(r.Context(), code, link.URL, time.Minute)
 		http.Redirect(w, r, link.URL, http.StatusFound)
 
