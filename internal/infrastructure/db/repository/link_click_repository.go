@@ -39,12 +39,19 @@ func (r *LinkClickRepository) CountByLinkID(ctx context.Context, linkID string) 
 
 func (r *LinkClickRepository) GetByLinkID(ctx context.Context, linkID string, limit int, offset int) ([]model.LinkClick, error) {
 	var clicks []model.LinkClick
-	if err := r.db.WithContext(ctx).
+
+	query := r.db.WithContext(ctx).
 		Where("link_id = ?", linkID).
-		Order("clicked_at DESC").
-		Limit(limit).
-		Offset(offset).
-		Find(&clicks).Error; err != nil {
+		Order("id")
+
+	if limit > 0 {
+		query = query.Limit(limit)
+	}
+	if offset > 0 {
+		query = query.Offset(offset)
+	}
+
+	if err := query.Find(&clicks).Error; err != nil {
 		return nil, err
 	}
 	return clicks, nil
