@@ -1,12 +1,18 @@
 module github.com/dakshesh14/golinky
 
-go 1.22.2
+go 1.23.0
+
+toolchain go1.24.7
 
 require gorm.io/driver/postgres v1.6.0
 
 require (
 	github.com/cespare/xxhash/v2 v2.3.0 // indirect
 	github.com/dgryski/go-rendezvous v0.0.0-20200823014737-9f7001d12a5f // indirect
+	github.com/go-chi/httprate v0.15.0 // indirect
+	github.com/klauspost/cpuid/v2 v2.2.10 // indirect
+	github.com/zeebo/xxh3 v1.0.2 // indirect
+	golang.org/x/sys v0.30.0 // indirect
 )
 
 require (
@@ -21,7 +27,7 @@ require (
 	github.com/joho/godotenv v1.5.1
 	github.com/redis/go-redis/v9 v9.13.0
 	golang.org/x/crypto v0.31.0 // indirect
-	golang.org/x/sync v0.10.0 // indirect
+	golang.org/x/sync v0.12.0 // indirect
 	golang.org/x/text v0.21.0 // indirect
 	gorm.io/gorm v1.25.10
 )
