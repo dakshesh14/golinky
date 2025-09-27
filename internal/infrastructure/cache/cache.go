@@ -11,6 +11,8 @@ import (
 type CacheService interface {
 	Get(ctx context.Context, key string) (string, error)
 	Set(ctx context.Context, key string, value interface{}, expiration time.Duration) error
+	Enqueue(ctx context.Context, queue string, value interface{}) error
+	Dequeue(ctx context.Context, queue string, timeout time.Duration) (string, error)
 	Delete(ctx context.Context, key string) error
 	Close() error
 }
@@ -64,4 +66,32 @@ func (r *redisService) Delete(ctx context.Context, key string) error {
 
 func (r *redisService) Close() error {
 	return r.client.Close()
+}
+
+func (r *redisService) Enqueue(ctx context.Context, queue string, value interface{}) error {
+	var strValue string
+	switch v := value.(type) {
+	case string:
+		strValue = v
+	default:
+		bytes, err := json.Marshal(value)
+		if err != nil {
+			return err
+		}
+		strValue = string(bytes)
+	}
+	return r.client.LPush(ctx, queue, strValue).Err()
+}
+
+func (r *redisService) Dequeue(ctx context.Context, queue string, timeout time.Duration) (string, error) {
+	res, err := r.client.BRPop(ctx, timeout, queue).Result()
+
+	if err != nil {
+		return "", err
+	}
+
+	if len(res) < 2 {
+		return "", nil
+	}
+	return res[1], nil
 }
