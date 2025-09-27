@@ -1,11 +1,13 @@
 package main
 
 import (
+	"context"
 	"log"
 	"net/http"
 
 	"github.com/dakshesh14/golinky/internal/config"
 	"github.com/dakshesh14/golinky/internal/container"
+	"github.com/dakshesh14/golinky/internal/domain/analytics"
 	"github.com/dakshesh14/golinky/internal/infrastructure/cache"
 	"github.com/dakshesh14/golinky/internal/infrastructure/db"
 	"github.com/dakshesh14/golinky/internal/routes"
@@ -30,6 +32,12 @@ func main() {
 	}
 
 	container := container.NewContainer(database, cache, cfg)
+
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
+	analyticsConsumer := analytics.NewAnalyticsConsumer(container)
+	go analyticsConsumer.Start(ctx)
 
 	router := chi.NewRouter()
 
